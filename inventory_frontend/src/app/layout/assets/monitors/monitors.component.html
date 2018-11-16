@@ -1,0 +1,162 @@
+<div class="row">
+  <div class="col col-lg-12">
+
+    <div class="search-box">
+        <div class="form-group input-group">
+            <input type="text"
+                    class="form-control"
+                    name ="search_keyword"
+                    placeholder="search..."
+                    (keyup)="filterList()"
+                    [(ngModel)] ="search_keyword" />
+            <div class="input-group-append">
+                <button class="btn btn-custom" type="button"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+    </div>
+    <button (click)="showAddModal()" class="btn btn-custom pull-right">
+        <i class="fa fa-plus"></i> Add Monitor
+    </button>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Serial Number</th>
+            <th>Asset Number</th>
+            <th>Model</th>
+            <th>Status</th>
+            <th>Date Added</th>
+            <th>Date Modified</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor ="let mn of currentPageList">
+            <td class="table-item dropdown" dropdown >
+              <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                  {{mn.serialNumber}}
+              </span>
+              <ul *dropdownMenu class="dropdown-menu">
+                <li class="menuitem" (click)="showEditModal(mn)">
+                    <a class="dropdown-item" href="javascript:void(0)" >
+                        <i class="fa fa-fw fa-file text-success" ></i> edit
+                    </a>
+                </li>
+              </ul>
+          </td>
+            <td>{{mn.assetNumber}}</td>
+            <td>{{mn.model.name}}</td>
+            <td>{{mn.status}}</td>
+            <td>{{mn.createdAt | date}}</td>
+            <td>{{mn.updatedAt | date}}</td>
+        </tr>
+        </tbody>
+    </table>
+    <pagination 
+        [totalItems] ="filteredList?.length"
+        [(ngModel)]="currentPage"
+        [maxSize] ="maxSize"
+        class="pagination-md"
+        [itemsPerPage] ="itemsPerPage"
+        (pageChanged)="pageChange($event)"
+        [boundaryLinks]="true"
+        [rotate]="false" >
+    </pagination>
+  </div>
+</div>
+
+<div bsModal #add_modal="bs-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Add Monitor</h4>
+            <button type="button" class="close" aria-label="Close" (click)="add_modal.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form  [formGroup]="addItemForm" (ngSubmit) ="addItem()" novalidate>
+            <div class="modal-body">
+                <fieldset>
+                    
+                    <strong>Serial Number</strong>
+                    <span *ngIf="!addItemForm.controls['serialNumber'].valid && addItemForm.controls['serialNumber'].touched" class="required-text"> *This is required</span>
+                    <input class="form-control"
+                            type="text"
+                            name ="serialNumber" 
+                            formControlName="serialNumber" />
+                    <strong>Asset Number</strong>
+                    <span *ngIf="!addItemForm.controls['assetNumber'].valid && addItemForm.controls['assetNumber'].touched" class="required-text"> *This is required</span>
+               
+                    <input class="form-control"
+                            type="text"
+                            name ="assetNumber" 
+                            formControlName="assetNumber" />   
+                    <strong>Model</strong>
+                    <span *ngIf="!addItemForm.controls['model'].valid && addItemForm.controls['model'].touched" class="required-text"> *This is required</span>
+               
+                    <ng-select [items]="models"
+                                placeholder="Select Model"
+                                [searchFn]="searchModel"
+                                formControlName="model">
+                        <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                {{item.name}} 
+                        </ng-template>
+                    </ng-select>
+                    <div class="error text-danger"> {{error}}</div>
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-custom" *ngIf="addItemForm.valid">Save</button>
+                <button type="button" class="btn btn-custom" (click)="add_modal.hide()" >Close</button>
+            </div>
+        </form>
+        </div>
+        </div>
+    </div>
+
+    <div bsModal #edit_modal="bs-modal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Monitor</h4>
+                    <button type="button" class="close" aria-label="Close" (click)="edit_modal.hide()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form  [formGroup]="editItemForm" (ngSubmit) ="editItem()" novalidate>
+                    <div class="modal-body">
+                        <fieldset>
+                            
+                            <strong>Serial Number</strong>
+                            <span *ngIf="!editItemForm.controls['serialNumber'].valid && editItemForm.controls['serialNumber'].touched" class="required-text"> *This is required</span>
+                            <input class="form-control"
+                                    type="text"
+                                    name ="serialNumber" 
+                                    formControlName="serialNumber" />
+                            <strong>Asset Number</strong>
+                            <span *ngIf="!editItemForm.controls['assetNumber'].valid && editItemForm.controls['assetNumber'].touched" class="required-text"> *This is required</span>
+                       
+                            <input class="form-control"
+                                    type="text"
+                                    name ="assetNumber" 
+                                    formControlName="assetNumber" />   
+                            <strong>Model</strong>
+                            <span *ngIf="!editItemForm.controls['model'].valid && editItemForm.controls['model'].touched" class="required-text"> *This is required</span>
+                       
+                            <ng-select [items]="models"
+                                        placeholder="Select Model"
+                                        [searchFn]="searchModel"
+                                        formControlName="model">
+                                <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                        {{item.name}} 
+                                </ng-template>
+                            </ng-select>
+                            <div class="error text-danger"> {{error}}</div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-custom" *ngIf="editItemForm.valid">Save</button>
+                        <button type="button" class="btn btn-custom" (click)="edit_modal.hide()" >Close</button>
+                    </div>
+                </form>
+                </div>
+                </div>
+            </div>

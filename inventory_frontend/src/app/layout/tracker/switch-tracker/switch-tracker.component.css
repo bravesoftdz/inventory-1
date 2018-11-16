@@ -1,0 +1,33 @@
+.port-label{
+    text-align: center;
+}
+
+.port-vlan{
+    background: gray;
+    border: 1px solid #003b5d;
+    width:30px;
+    height: 30px;
+    margin: 2px;
+}
+.port-vlan  > div{
+    text-align: center;
+}
+.port-vlan.active{
+    background: green;
+}
+.swicth-upper > .port > .port-vlan{
+    background: gray;
+    border: 1px solid #003b5d;
+    padding: 10px;
+}
+.switch-upper > div, .switch-lower > div{
+    display: inline-block;    
+}
+
+
+.port-select{
+    margin-left: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    padding: 4px;
+}

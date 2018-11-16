@@ -1,0 +1,9 @@
+.chart-container{
+    width: 500px;
+    height: 500px;
+}
+
+.card-sm{
+    display: inline-block;
+    margin: 10px;
+}

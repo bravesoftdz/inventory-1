@@ -1,0 +1,385 @@
+<div class="row">
+  <div class="col col-lg-12">
+    <div class="card">
+        <div class="card-header card-custom">
+           <span style="font-size: 20px;">Production Assets</span>
+
+           <span class="pull-right dropdown" dropdown>
+             <i class="fa fa-gear custom-icon dropdown-toggle custom-dropdown" dropdownToggle ></i>
+        
+              <ul *dropdownMenu class="dropdown-menu dropdown-menu-right">
+                <li class="menuitem">
+                    <a class="dropdown-item" 
+                       href="javascript:void(0)" 
+                       (click)="showBatchDeployModal()">
+                        batch deploy
+                    </a>
+                </li>
+                <li class="menuitem" >
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="showBatchPulloutModal()">
+                        batch pullout
+                    </a>
+                </li>
+                <li class="menuitem" >
+                    <a class="dropdown-item" href="javascript:void(0)" (click)="showBatchTransferModal()">
+                        batch transfer
+                    </a>
+                </li>
+            </ul>
+        </span>
+           
+           
+        </div>
+        <div class="card-body">
+            <div class="form-group input-group" [style.width]="'400px'">
+                <input type="text"
+                        class="form-control"
+                        name ="search_keyword"
+                        placeholder="search..."
+                        (keyup)="searchItem()"
+                        [(ngModel)] ="search_keyword" />
+                <div class="input-group-append">
+                    <button class="btn btn-custom" type="button"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>System Unit</th>
+                        <th>Monitors</th>
+                        <th>Keyboard</th>
+                        <th>Mouse</th>
+                        <th>UPS</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor ="let prod of currentPageList">
+                        <td class="table-item" >
+                            <div class="dropdown"dropdown>
+                                <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                                    {{prod.location.name}}
+                                </span>
+                                <ul *dropdownMenu class="dropdown-menu">
+                                    <li class="menuitem" (click)="showEditAssetModal(prod)">
+                                        <a class="dropdown-item" href="javascript:void(0)" >
+                                            <i class="fa fa-fw fa-pencil text-warning" ></i> edit
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                           
+                        </td>
+                        <td>{{prod.systemUnit?.assetNumber}}</td>
+                        <td>
+                          <div> {{prod.monitor1?.assetNumber}}</div>
+                          <div> {{prod.monitor2?.assetNumber}}</div>
+                        
+                        </td>
+                        <td>{{prod.keyboard?.assetNumber}}</td>
+                        <td>{{prod.mouse?.assetNumber}}</td>
+                        <td>{{prod.ups?.assetNumber}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <pagination 
+                    [totalItems] ="filteredList?.length"
+                    [(ngModel)]="currentPage"
+                    [maxSize] ="maxSize"
+                    class="pagination-md"
+                    [itemsPerPage] ="itemsPerPage"
+                    (pageChanged)="pageChange($event)"
+                    [boundaryLinks]="true"
+                    [rotate]="false" >
+                </pagination>
+        </div>
+    </div>
+   
+  </div>
+</div>
+
+
+
+<div bsModal #batch_deploy="bs-modal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Batch Deploy Assets</h4>
+                <button type="button" class="close" aria-label="Close" (click)="batch_deploy.hide()" >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="batchDeploy()">
+                <div class="modal-body">
+                    <input type="file"
+                           name="file"
+                           #deployRef (change)="onFileChange($event)">
+                    <br>
+                    <div *ngIf="importResponse">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <th>#</th>
+                                        <th>Location</th>
+                                        <th>System Unit</th>
+                                        <th>Monitors</th>
+                                        <th>Keyboard</th>
+                                        <th>Mouse</th>
+                                        <th>UPS</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let asset of importResponse; let i = index">
+                                            <td>{{i+1}}</td>
+                                            <td>{{asset.location?.name}}</td>
+                                            <td>{{asset.systemUnit?.assetNumber}}</td>
+                                            <td>
+                                                <div>{{asset.monitor1?.assetNumber}}</div>
+                                                <div>{{asset.monitor2?.assetNumber}}</div>
+                                            </td>
+                                            <td>{{asset.keyboard?.assetNumber}}</td>
+                                            <td>{{asset.mouse?.assetNumber}}</td>
+                                            <td>{{asset.ups?.assetNumber}}</td>
+                                        </tr>
+                           
+                                    </tbody>
+                                </table>
+                            <br>
+                            
+                        </div>
+                    
+                    </div>
+                    <div class="text-danger">{{importError}}</div>
+                    <div class="text-danger">{{submitError}}</div>
+                </div>
+                <div class="modal-footer">    
+                    <button type="submit" class="btn btn-custom" *ngIf="importResponse">Submit</button>
+                    <button type="button" class="btn btn-custom"  (click)="batch_deploy.hide()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+
+
+  
+
+<div bsModal #batch_transfer="bs-modal" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Batch Transfer Assets</h4>
+                    <button type="button" class="close" aria-label="Close" (click)="batch_transfer.hide()" >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form (ngSubmit)="batchTransfer()">
+                    <div class="modal-body">
+                        <input type="file"
+                               name="file"
+                               #transferRef (change)="onTransferFileChange($event)">
+                        <br>
+                        <div *ngIf="transferImportResponse">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <th>#</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>System Unit</th>
+                                            <th>Monitors</th>
+                                            <th>Keyboard</th>
+                                            <th>Mouse</th>
+                                            <th>UPS</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let asset of transferImportResponse; let i = index">
+                                                <td>{{i+1}}</td>
+                                                <td>{{asset.fromLocation?.name}}</td>
+                                                <td>{{asset.toLocation?.name}}</td>
+                                                <td>{{asset.systemUnit?.assetNumber}}</td>
+                                                <td>
+                                                    <div>{{asset.monitor1?.assetNumber}}</div>
+                                                    <div>{{asset.monitor2?.assetNumber}}</div>
+                                                </td>
+                                                <td>{{asset.keyboard?.assetNumber}}</td>
+                                                <td>{{asset.mouse?.assetNumber}}</td>
+                                                <td>{{asset.ups?.assetNumber}}</td>
+                                            </tr>
+                               
+                                        </tbody>
+                                    </table>
+                                <br>
+                                
+                            </div>
+                        
+                        </div>
+                        <div class="text-danger">{{importError}}</div>
+                        <div class="text-danger">{{submitError}}</div>
+                    </div>
+                    <div class="modal-footer">    
+                        <button type="submit" class="btn btn-custom" *ngIf="transferImportResponse">Submit</button>
+                        <button type="button" class="btn btn-custom"  (click)="batch_transfer.hide()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
+
+
+
+      <div bsModal #batch_pullout="bs-modal" class="modal fade">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Batch Pullout Assets</h4>
+                        <button type="button" class="close" aria-label="Close" (click)="batch_pullout.hide()" >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form (ngSubmit)="batchPullout()">
+                        <div class="modal-body">
+                            <input type="file"
+                                   name="file"
+                                   #pulloutRef (change)="onPulloutFileChange($event)">
+                            <br>
+                            <div *ngIf="importResponse">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <th>#</th>
+                                                <th>Location</th>
+                                                <th>System Unit</th>
+                                                <th>Monitors</th>
+                                                <th>Keyboard</th>
+                                                <th>Mouse</th>
+                                                <th>UPS</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let asset of pulloutImportResponse; let i = index">
+                                                    <td>{{i+1}}</td>
+                                                    <td>{{asset.location.name}}</td>
+                                                    <td>{{asset.systemUnit?.assetNumber}}</td>
+                                                    <td>
+                                                        <div>{{asset.monitor1?.assetNumber}}</div>
+                                                        <div>{{asset.monitor2?.assetNumber}}</div>
+                                                    </td>
+                                                    <td>{{asset.keyboard?.assetNumber}}</td>
+                                                    <td>{{asset.mouse?.assetNumber}}</td>
+                                                    <td>{{asset.ups?.assetNumber}}</td>
+                                                </tr>
+                                   
+                                            </tbody>
+                                        </table>
+                                    <br>
+                                    
+                                </div>
+                            
+                            </div>
+                            <div class="text-danger">{{importError}}</div>
+                            <div class="text-danger">{{submitError}}</div>
+                        </div>
+                        <div class="modal-footer">    
+                            <button type="submit" class="btn btn-custom" *ngIf="importResponse">Submit</button>
+                            <button type="button" class="btn btn-custom"  (click)="batch_pullout.hide()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+          </div>
+
+    <div bsModal #edit_asset_modal="bs-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Assets</h4>
+                    <button type="button" class="close" aria-label="Close" (click)="edit_asset_modal.hide()" >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form  [formGroup]="editAssetForm" (ngSubmit)="editAsset()">
+                    <div class="modal-body">
+                        <fieldset>
+                            <strong>Location</strong>
+                            <div class="form-control">
+                                {{selectedItem?.location.name}}
+                            </div>
+                            <div>
+                                <strong>System Unit</strong>
+                            </div>
+                            <ng-select [items]="cpus"
+                                        placeholder="Select system unit"
+                                        [searchFn]="searchAsset"
+                                        formControlName="cpu">
+                                    <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                            {{item.assetNumber}} 
+                                    </ng-template>
+                            </ng-select>
+                            <div>
+                                <strong>Monitor A</strong>
+                            </div>
+                            <ng-select [items]="monitors"
+                                        placeholder="Select monitor A"
+                                        [searchFn]="searchAsset"
+                                        formControlName="monitorA">
+                                    <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                            {{item.assetNumber}} 
+                                    </ng-template>
+                            </ng-select>
+                            <div>
+                                <strong>Monitor B</strong>
+                            </div>
+                            <ng-select [items]="monitors"
+                                        placeholder="Select monitor B"
+                                        [searchFn]="searchAsset"
+                                        formControlName="monitorB">
+                                    <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                            {{item.assetNumber}} 
+                                    </ng-template>
+                            </ng-select>
+                            <div>
+                                <strong>Keyboard</strong>
+                            </div>
+                            <ng-select [items]="keyboards"
+                                        placeholder="Select keyboard"
+                                        [searchFn]="searchAsset"
+                                        formControlName="keyboard">
+                                    <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                            {{item.assetNumber}} 
+                                    </ng-template>
+                            </ng-select>
+                            <div>
+                                <strong>Mouse</strong>
+                            </div>
+                                <ng-select [items]="mice"
+                                            placeholder="Select mouse"
+                                            [searchFn]="searchAsset"
+                                            formControlName="mouse">
+                                        <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                                {{item.assetNumber}} 
+                                        </ng-template>
+                                </ng-select>
+                            <div>
+                                <strong>UPS</strong>
+                            </div>
+                            <ng-select [items]="ups"
+                                        placeholder="Select UPS"
+                                        [searchFn]="searchAsset"
+                                        formControlName="ups">
+                                    <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                            {{item.assetNumber}} 
+                                    </ng-template>
+                            </ng-select>
+                            <div class="text-danger">{{submitError}}</div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">    
+                        <button type="submit" class="btn btn-custom" >Submit</button>
+                        <button type="button" class="btn btn-custom"  (click)="edit_asset_modal.hide()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        </div>
+             
+

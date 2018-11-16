@@ -1,0 +1,37 @@
+/* You can add global styles to this file, and also import other style files */
+@media screen and (max-width: 992px) {
+    .sidebar {
+        top: 54px;
+        left: 0px;
+    }
+}
+@media (min-width: 992px) {
+    .header-fields {
+        display: none;
+    }
+}
+
+.sidebar{
+    border-radius: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 56px;
+    left: 235px;
+    width: 235px;
+    margin-left: -235px;
+    border: 0;
+    overflow-y: auto;
+    background-color: #003b5d;
+    bottom: 0;
+    overflow-x: hidden;
+    padding-bottom: 40px;
+    transition: all .2s ease-in-out;
+}
+
+.sidebar .list-group a.list-group-item{
+    background: #003b5d;
+    border: 1px solid #002b44;
+    border-radius: 0;
+    color: #999;
+    text-decoration: none;
+}

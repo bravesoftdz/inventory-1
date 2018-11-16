@@ -1,0 +1,235 @@
+<div class="row">
+    <div class="col col-lg-12">
+  
+      <div class="search-box">
+      <div class="form-group input-group">
+          <input type="text"
+                  class="form-control"
+                  name ="search_keyword"
+                  placeholder="search..."
+                  (keyup)="filterList()"
+                  [(ngModel)] ="search_keyword" />
+          <div class="input-group-append">
+              <button class="btn btn-custom" type="button"><i class="fa fa-search"></i></button>
+          </div>
+      </div>
+      </div>
+            <button (click)="showAddModal()"
+                    class="btn btn-custom pull-right">
+                <i class="fa fa-plus"></i> Add Switch Config
+          </button>
+      <table class="table table-bordered">
+          <thead>
+          <tr>
+              <th>Switch</th>
+              <th>Configuration</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor ="let sw of currentPageList">
+            <td>{{sw.source.name}}</td>
+            <td>
+                <div>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Port</th>
+                                <th>Panel</th>
+                                <th>VLan</th>
+                                <th>Trunk Switch</th>
+                                <th>Trunk Port</th>
+                                <th>Department</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let conf of sw.portConfigs">
+                                <td (click)="showEditModal(sw.source,conf)" class="table-item">{{conf.switchPort}}</td>
+                                <td>{{conf.portPanel}}</td>
+                                <td>{{conf.vlan}}</td>
+                                <td>{{conf.trunkSwitch?.name}}</td>
+                                <td>{{conf.trunkPort == 0 ?'': conf.trunkPort}}</td>
+                                <td>{{conf.department}}</td>
+                                <td>{{conf.remarks}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </td>
+          </tr>
+          </tbody>
+      </table>
+      <pagination 
+          [totalItems] ="filteredList?.length"
+          [(ngModel)]="currentPage"
+          [maxSize] ="maxSize"
+          class="pagination-md"
+          [itemsPerPage] ="itemsPerPage"
+          (pageChanged)="pageChange($event)"
+          [boundaryLinks]="true"
+          [rotate]="false" >
+      </pagination>
+    </div>
+  </div>
+  <div bsModal #add_modal="bs-modal" class="modal fade">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Add Switch Config</h4>
+              <button type="button" class="close" aria-label="Close" (click)="add_modal.hide()">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <form  (ngSubmit) ="addItem()" novalidate>
+              <div class="modal-body">
+                  <fieldset>
+                      
+                      <strong>Switch ports</strong>
+                      <select name="numPorts" 
+                              id="numPorts" 
+                              class="port-select"
+                              (change)="onNumPortChange($event.target.value)" 
+                              [(ngModel)]="selectedPorts" 
+                              [ngModelOptions]="{standalone: true}"> 
+                          <option value="{{num}}" *ngFor="let num of switchNumPorts">{{num}}</option>
+                      </select>
+                      <br>
+                      <div>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Switch</th>
+                                    <th>Port Configuration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td [style.width]="'200px'">
+                                        <ng-select [items]="switches"
+                                                    placeholder="Select Switch"
+                                                    [searchFn]="searchSwitch"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    [(ngModel)]="newItem.source">
+                                            <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                                    {{item.name}} 
+                                            </ng-template>
+                                        </ng-select>
+                                    </td>
+                                    <td>
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Port</th>
+                                                    <th>Panel</th>
+                                                    <th>VLan</th>
+                                                    <th>Trunk Switch</th>
+                                                    <th>Trunk Port</th>
+                                                    <th>Department</th>
+                                                    <th>Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let config of newItem.portConfigs">
+                                                    <td>{{config.switchPort}}</td>
+                                                    <td>
+                                                        <input type="text" [(ngModel)] ="config.portPanel" name="portPanel">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" [(ngModel)] ="config.vlan" name="vlan">
+                                                    </td>
+                                                    <td>
+                                                        <ng-select [items]="switches"
+                                                                    placeholder="Select Switch"
+                                                                    [searchFn]="searchSwitch"
+                                                                    [ngModelOptions]="{standalone: true}"
+                                                                    [(ngModel)]="config.trunkSwitch">
+                                                            <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                                                    {{item.name}} 
+                                                            </ng-template>
+                                                        </ng-select>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" [(ngModel)] ="config.trunkPort" name="trunkPort">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" [(ngModel)] ="config.department" name="department">
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" [(ngModel)] ="config.remarks" name="remarks">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                      
+                      <div class="error text-danger"> {{error}}</div>
+                  </fieldset>
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-custom" >Save</button>
+                  <button type="button" class="btn btn-custom" (click)="add_modal.hide()" >Close</button>
+              </div>
+          </form>
+          </div>
+          </div>
+      </div>
+
+<div bsModal #edit_modal="bs-modal" class="modal fade">
+  <div class="modal-dialog">
+      <div class="modal-content">
+      <div class="modal-header">
+          <h4 class="modal-title">Edit Port Configuration</h4>
+          <button type="button" class="close" aria-label="Close" (click)="edit_modal.hide()">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <form  (ngSubmit) ="editItem()">
+          <div class="modal-body">
+              <fieldset>
+                  
+                  <strong>Switch</strong>
+                  <div class="form-control">{{selectedItem.source?.name}}</div>
+                  <strong>Port</strong>
+                  <div class="form-control">{{selectedItem.portConfig?.switchPort}}</div>
+                 
+                  <strong>Panel</strong>
+                  <input type="text" class="form-control" name="portPanel" [(ngModel)]="selectedItem.portConfig.portPanel" >
+                  
+                  <strong>VLan</strong>
+                  <input type="text" class="form-control" name="vlan" [(ngModel)]="selectedItem.portConfig.vlan" >
+                  
+                  <strong>Trunk Switch</strong>
+                  <ng-select [items]="switches"
+                            placeholder="Select Switch"
+                            [searchFn]="searchSwitch"
+                            [ngModelOptions]="{standalone: true}"
+                            [(ngModel)]="selectedItem.portConfig.trunkSwitch">
+                        <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                            {{item.name}} 
+                        </ng-template>
+                  </ng-select>
+                  <strong>Trunk Port</strong>
+                  <input type="text" class="form-control" name="department" [(ngModel)]="selectedItem.portConfig.trunkPort" >
+                  
+                  <strong>Department</strong>
+                  <input type="text" class="form-control" name="trunkPort" [(ngModel)]="selectedItem.portConfig.department" >
+                  
+                  <strong>Remarks</strong>
+                  <input type="text" class="form-control" name="trunkPort" [(ngModel)]="selectedItem.portConfig.remarks" >
+                  
+                  <div class="error text-danger"> {{error}}</div>
+              </fieldset>
+          </div>
+          <div class="modal-footer">
+              <button type="submit" class="btn btn-custom" >Save</button>
+              <button type="button" class="btn btn-custom" (click)="edit_modal.hide()" >Close</button>
+          </div>
+      </form>
+      </div>
+      </div>
+  </div>

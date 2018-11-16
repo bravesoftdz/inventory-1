@@ -1,0 +1,294 @@
+<div class="row">
+  <div class="col col-lg-12">
+    <div>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Location</th>
+              <th>System Units</th>
+              <th>Monitors</th>
+              <th>Keyboards</th>
+              <th>Mouse</th>
+              <th>UPS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let np of currentPageList">
+              <td class="table-item"  >
+                <div class="dropdown" dropdown> 
+                    <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                        {{np.location.locationName}}
+                    </span>
+                    <ul *dropdownMenu class="dropdown-menu">
+                      <li class="menuitem" (click)="showAddCPUModal(np.location)">
+                          <a class="dropdown-item" href="javascript:void(0)" >
+                              <i class="fa fa-fw fa-plus text-success" ></i> add CPU
+                          </a>
+                      </li>
+                      <li class="menuitem" (click)="showAddMonitorModal(np.location)">
+                          <a class="dropdown-item" href="javascript:void(0)" >
+                              <i class="fa fa-fw fa-plus text-success" ></i> add monitor
+                          </a>
+                      </li>
+                      <li class="menuitem" (click)="showAddKeyboardModal(np.location)">
+                          <a class="dropdown-item" href="javascript:void(0)" >
+                              <i class="fa fa-fw fa-plus text-success" ></i> add keyboard
+                          </a>
+                      </li>
+                      <li class="menuitem" (click)="showAddMouseModal(np.location)">
+                          <a class="dropdown-item" href="javascript:void(0)" >
+                              <i class="fa fa-fw fa-plus text-success" ></i> add mouse
+                          </a>
+                      </li>
+                      <li class="menuitem" (click)="showAddUPSModal(np.location)">
+                          <a class="dropdown-item" href="javascript:void(0)" >
+                              <i class="fa fa-fw fa-plus text-success" ></i> add UPS
+                          </a>
+                      </li>
+                    </ul>
+                </div>
+              
+              </td>
+              <td>
+                  <div class="dropdown" dropdown *ngFor="let su of np.systemUnits"> 
+                    <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                        {{su.systemUnit.assetNumber}}
+                    </span>
+                    <ul *dropdownMenu class="dropdown-menu">
+                      <li class="menuitem" (click)= "deleteSystemUnit(np.location,su.systemUnit)" >
+                          <a class="dropdown-item" href="javascript:void(0)" >
+                              <i class="fa fa-fw fa-times text-danger" ></i> remove {{su.systemUnit.assetNumber}}
+                          </a>
+                      </li>
+                    </ul>
+                  </div>
+              </td>
+              <td>
+                <div class="dropdown" dropdown *ngFor="let mon of np.monitors"> 
+                    <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                        {{mon.monitor.assetNumber}}
+                    </span>
+                    <ul *dropdownMenu class="dropdown-menu">
+                      <li class="menuitem" (click)="deleteMonitor(np.location,mon.monitor)" >
+                          <a class="dropdown-item" href="javascript:void(0)" >
+                              <i class="fa fa-fw fa-times text-danger" ></i> remove {{mon.monitor.assetNumber}}
+                          </a>
+                      </li>
+                    </ul>
+                  </div>
+              </td>
+              <td>
+                  <div class="dropdown" dropdown *ngFor="let kb of np.keyboards"> 
+                      <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                          {{kb.keyboard.assetNumber}}
+                      </span>
+                      <ul *dropdownMenu class="dropdown-menu">
+                        <li class="menuitem" (click)="deleteKeyboard(np.location,kb.keyboard)" >
+                            <a class="dropdown-item" href="javascript:void(0)" >
+                                <i class="fa fa-fw fa-times text-danger" ></i> remove {{kb.keyboard.assetNumber}}
+                            </a>
+                        </li>
+                      </ul>
+                    </div>
+              </td>
+              <td>
+                  <div class="dropdown" dropdown *ngFor="let ms of np.mice"> 
+                      <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                          {{ms.mouse.assetNumber}}
+                      </span>
+                      <ul *dropdownMenu class="dropdown-menu">
+                        <li class="menuitem" (click)="deleteMouse(np.location,ms.mouse)" >
+                            <a class="dropdown-item" href="javascript:void(0)" >
+                                <i class="fa fa-fw fa-times text-danger" ></i> remove {{ms.mouse.assetNumber}}
+                            </a>
+                        </li>
+                      </ul>
+                    </div>
+              </td>
+              <td>
+                  <div class="dropdown" dropdown *ngFor="let up of np.ups"> 
+                      <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                          {{up.ups.assetNumber}}
+                      </span>
+                      <ul *dropdownMenu class="dropdown-menu">
+                        <li class="menuitem" (click)="deleteUps(np.location,up.ups)" >
+                            <a class="dropdown-item" href="javascript:void(0)" >
+                                <i class="fa fa-fw fa-times text-danger" ></i> remove  {{up.ups.assetNumber}}
+                            </a>
+                        </li>
+                      </ul>
+                    </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+  </div>
+</div>
+<div bsModal #add_cpu_modal="bs-modal" class="modal fade">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Add System Unit</h4>
+              <button type="button" class="close" aria-label="Close" (click)="add_cpu_modal.hide()">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <form   (ngSubmit) ="addCPU()" novalidate>
+              <div class="modal-body">
+                  <fieldset>
+                      <strong>System Unit</strong>
+                      <ng-select [items]="cpus"
+                                 [ngModelOptions]="{standalone: true}"
+                                  placeholder="Select System Unit"
+                                  [searchFn]="searchItem"
+                                  [(ngModel)]="newCPU.cpu">
+                          <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                              {{item.assetNumber}} 
+                          </ng-template>
+                      </ng-select>
+                      <div class="error text-danger"> {{error}}</div>
+                  </fieldset>
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" class="btn btn-custom" *ngIf="newCPU.cpu">Save</button>
+                  <button type="button" class="btn btn-custom" (click)="add_cpu_modal.hide()" >Close</button>
+              </div>
+          </form>
+        </div>
+      </div>
+  </div>
+  
+  <div bsModal #add_monitor_modal="bs-modal" class="modal fade">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Add Monitor</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="add_monitor_modal.hide()">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <form   (ngSubmit) ="addMonitor()" novalidate>
+                  <div class="modal-body">
+                      <fieldset>
+                          <strong>Monitor</strong>
+                          <ng-select [items]="monitors"
+                                     [ngModelOptions]="{standalone: true}"
+                                      placeholder="Select Monitor"
+                                      [searchFn]="searchItem"
+                                      [(ngModel)]="newMonitor.monitor">
+                              <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                      {{item.assetNumber}} 
+                              </ng-template>
+                          </ng-select>
+                          <div class="error text-danger"> {{error}}</div>
+                      </fieldset>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="submit" class="btn btn-custom" *ngIf="newMonitor.monitor">Save</button>
+                      <button type="button" class="btn btn-custom" (click)="add_monitor_modal.hide()" >Close</button>
+                  </div>
+              </form>
+            </div>
+          </div>
+      </div>
+
+      <div bsModal #add_keyboard_modal="bs-modal" class="modal fade">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h4 class="modal-title">Add Keyboard</h4>
+                      <button type="button" class="close" aria-label="Close" (click)="add_keyboard_modal.hide()">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <form   (ngSubmit) ="addKeyboard()" novalidate>
+                      <div class="modal-body">
+                          <fieldset>
+                              <strong>Keyboard</strong>
+                              <ng-select [items]="keyboards"
+                                         [ngModelOptions]="{standalone: true}"
+                                          placeholder="Select keyboard"
+                                          [searchFn]="searchItem"
+                                          [(ngModel)]="newKeyboard.keyboard">
+                                  <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                          {{item.assetNumber}} 
+                                  </ng-template>
+                              </ng-select>
+                              <div class="error text-danger"> {{error}}</div>
+                          </fieldset>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="submit" class="btn btn-custom" *ngIf="newKeyboard.keyboard">Save</button>
+                          <button type="button" class="btn btn-custom" (click)="add_keyboard_modal.hide()" >Close</button>
+                      </div>
+                  </form>
+                </div>
+              </div>
+          </div>
+          <div bsModal #add_mouse_modal="bs-modal" class="modal fade">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h4 class="modal-title">Add Mouse</h4>
+                          <button type="button" class="close" aria-label="Close" (click)="add_mouse_modal.hide()">
+                              <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <form   (ngSubmit) ="addMouse()" novalidate>
+                          <div class="modal-body">
+                              <fieldset>
+                                  <strong>Mouse</strong>
+                                  <ng-select [items]="mice"
+                                              [ngModelOptions]="{standalone: true}"
+                                              placeholder="Select mouse"
+                                              [searchFn]="searchItem"
+                                              [(ngModel)]="newMouse.mouse">
+                                      <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                              {{item.assetNumber}} 
+                                      </ng-template>
+                                  </ng-select>
+                                  <div class="error text-danger"> {{error}}</div>
+                              </fieldset>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="submit" class="btn btn-custom" *ngIf="newMouse.mouse">Save</button>
+                              <button type="button" class="btn btn-custom" (click)="add_mouse_modal.hide()" >Close</button>
+                          </div>
+                      </form>
+                    </div>
+                  </div>
+              </div>
+              <div bsModal #add_ups_modal="bs-modal" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add UPS</h4>
+                            <button type="button" class="close" aria-label="Close" (click)="add_ups_modal.hide()">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form   (ngSubmit) ="addUPS()" novalidate>
+                            <div class="modal-body">
+                                <fieldset>
+                                    <strong>UPS</strong>
+                                    <ng-select [items]="ups"
+                                               [ngModelOptions]="{standalone: true}"
+                                               placeholder="Select UPS"
+                                               [searchFn]="searchItem"
+                                               [(ngModel)]="newUPS.ups">
+                                        <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                                {{item.assetNumber}} 
+                                        </ng-template>
+                                    </ng-select>
+                                    <div class="error text-danger"> {{error}}</div>
+                                </fieldset>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-custom" *ngIf="newUPS.ups">Save</button>
+                                <button type="button" class="btn btn-custom" (click)="add_ups_modal.hide()" >Close</button>
+                            </div>
+                        </form>
+                      </div>
+                    </div>
+                </div>

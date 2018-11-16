@@ -1,0 +1,121 @@
+<div class="row">
+    <div class="col col-lg-12">
+  
+      <div class="search-box">
+      <div class="form-group input-group">
+          <input type="text"
+                  class="form-control"
+                  name ="search_keyword"
+                  placeholder="search..."
+                  (keyup)="filterList()"
+                  [(ngModel)] ="search_keyword" />
+          <div class="input-group-append">
+              <button class="btn btn-custom" type="button"><i class="fa fa-search"></i></button>
+          </div>
+      </div>
+      </div>
+            <button (click)="showAddModal()"
+                    class="btn btn-custom pull-right">
+                <i class="fa fa-plus"></i> Add Room
+          </button>
+      <table class="table table-bordered table-hover">
+          <thead>
+          <tr>
+              <th>Room Name</th>
+              <th>Date Created</th>
+              <th>Date Modified</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor ="let r of currentPageList">
+              <td class="table-item dropdown" dropdown >
+                <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                    {{r.name}}
+                </span>
+                <ul *dropdownMenu class="dropdown-menu">
+                  <li class="menuitem" (click)="showEditModal(r)">
+                      <a class="dropdown-item" href="javascript:void(0)" >
+                          <i class="fa fa-fw fa-file text-success" ></i> edit
+                      </a>
+                  </li>
+                </ul>
+            </td>
+            <td>{{r.createdAt | date}}</td>
+            <td>{{r.updatedAt | date}}</td>
+          </tr>
+          </tbody>
+      </table>
+      <pagination 
+          [totalItems] ="filteredList?.length"
+          [(ngModel)]="currentPage"
+          [maxSize] ="maxSize"
+          class="pagination-md"
+          [itemsPerPage] ="itemsPerPage"
+          (pageChanged)="pageChange($event)"
+          [boundaryLinks]="true"
+          [rotate]="false" >
+      </pagination>
+    </div>
+  </div>
+  <div bsModal #add_modal="bs-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Training Room</h4>
+                <button type="button" class="close" aria-label="Close" (click)="add_modal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form  [formGroup]="addItemForm" (ngSubmit) ="addItem()" novalidate>
+                <div class="modal-body">
+                    <fieldset>
+                        
+                        <strong>Name</strong>
+                        <span *ngIf="!addItemForm.controls['name'].valid && addItemForm.controls['name'].touched" class="required-text"> *This is required</span>
+                        <input class="form-control"
+                                type="text"
+                                name ="name" 
+                                formControlName="name" />
+              
+                      <div class="error text-danger"> {{error}}</div>
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-custom" *ngIf="addItemForm.valid">Save</button>
+                    <button type="button" class="btn btn-custom" (click)="add_modal.hide()" >Close</button>
+                </div>
+            </form>
+            </div>
+            </div>
+        </div>
+
+  <div bsModal #edit_modal="bs-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Edit Training Room</h4>
+            <button type="button" class="close" aria-label="Close" (click)="edit_modal.hide()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <form  [formGroup]="editItemForm" (ngSubmit) ="editItem()" novalidate>
+            <div class="modal-body">
+                <fieldset>
+                    
+                    <strong>Name</strong>
+                    <span *ngIf="!editItemForm.controls['name'].valid && editItemForm.controls['name'].touched" class="required-text"> *This is required</span>
+                    <input class="form-control"
+                            type="text"
+                            name ="name" 
+                            formControlName="name" />
+                    <div class="error text-danger"> {{error}}</div>
+                </fieldset>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-custom" *ngIf="editItemForm.valid">Save</button>
+                <button type="button" class="btn btn-custom" (click)="edit_modal.hide()" >Close</button>
+            </div>
+        </form>
+        </div>
+        </div>
+    </div>

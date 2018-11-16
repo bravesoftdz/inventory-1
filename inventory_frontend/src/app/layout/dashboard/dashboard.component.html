@@ -1,0 +1,72 @@
+<div>
+    <tabset>
+      <tab heading="System Units" id="systemUnits">
+        <br>
+        <div class="card card-sm" [style.width]="'300px'">
+          <div class="card-header">System Units By Model</div>
+            <div class="card-body" >
+                <table class="table table-bordered table-striped">
+                  <thead>
+                    <tr>
+                      <th>Model</th>
+                      <th>Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor ="let cm of cpuByModel">
+                      <td>{{cm.label}}</td>
+                      <td>{{cm.value}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card card-sm" [style.width]="'400px'">
+            <div class="card-header">System Units By Department</div>
+              <div class="card-body" >
+                  <table class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th>Department</th>
+                        <th>Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor ="let cd of cpuByDepartment">
+                        <td>{{cd.label}}</td>
+                        <td>{{cd.value}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+              </div>
+          </div>
+      </tab>
+      <tab heading="Monitors" id="monitors">
+          Monitors
+      </tab>
+      <tab heading="Keyboards" id="keyboards">
+          Keyboards
+      </tab>
+      <tab heading="Mice" id="mice">
+          Mice
+      </tab>
+      <tab heading="headsets" id="headsets">
+          Headsets
+      </tab>
+      <tab heading="UPS" id="ups">
+          UPS
+      </tab>
+      <tab heading="Softwares" id="softwares">
+          Softwares
+      </tab>
+      <tab heading="switches" id="switches">
+          Switches
+      </tab>
+      <tab heading="RIDs" id="rfids">
+          RFIDs
+      </tab>
+    </tabset>
+  </div>
+  
+
+

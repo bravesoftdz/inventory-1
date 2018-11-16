@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: Inventory
+Implementation-Version: 1.0
+Built-By: jerico.grijaldo
+Implementation-Vendor-Id: com.personiv
+Build-Jdk: 1.8.0_161
+Implementation-URL: http://projects.spring.io/spring-boot/inventory/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

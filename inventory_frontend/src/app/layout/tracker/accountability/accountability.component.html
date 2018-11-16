@@ -1,0 +1,215 @@
+<div class="row">
+  <div class="col col-lg-12">
+    <div class="card">
+        <div class="card-header card-custom">
+           <span style="font-size: 20px;">Accountabilities</span>
+
+           <span class="pull-right dropdown" dropdown>
+             <i class="fa fa-gear custom-icon dropdown-toggle custom-dropdown" dropdownToggle ></i>
+        
+              <ul *dropdownMenu class="dropdown-menu dropdown-menu-right">
+                <li class="menuitem">
+                    <a class="dropdown-item" href="javascript:void(0)">
+                        <i class="fa fa-plus"></i> new accountability
+                    </a>
+                </li>
+            </ul>
+        </span>
+           
+           
+        </div>
+        <div class="card-body">
+            <div class="form-group input-group" [style.width]="'400px'">
+                <input type="text"
+                        class="form-control"
+                        name ="search_keyword"
+                        placeholder="search..."
+                        (keyup)="searchItem()"
+                        [(ngModel)] ="search_keyword" />
+                <div class="input-group-append">
+                    <button class="btn btn-custom" type="button"><i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Employee Number</th>
+                        <th>Accountabilities</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor ="let acc of currentPageList">
+                        <td>
+                            <div class="table-item dropdown" dropdown>
+                                <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                                        {{acc.employeeName}}
+                                    </span>
+                                    <ul *dropdownMenu class="dropdown-menu">
+                                        <li class="menuitem" (click)="showAddAccModal(acc)">
+                                            <a class="dropdown-item custom" href="javascript:void(0)" >
+                                                <i class="fa fa-fw fa-plus" ></i>
+                                                add accountability 
+                                            </a>
+                                        </li>
+                                    </ul>
+                            </div>
+                        
+                        </td>
+                        <td>{{acc.employeeNumber}}</td>
+                        <td>
+                            <div style="width:100%;display: block;" *ngIf="acc.accountabilities.length > 0">
+                                <table class="table">
+                                    <tr>
+                                        <th>Asset Number</th>
+                                        <th>Asset Type</th>
+                                        <th>Attachment</th>
+                                        <th>Remarks</th>
+                                        <th>Date Modified</th>
+                                    </tr>
+                                    <tbody>
+                                        <tr *ngFor = "let act of acc.accountabilities" >
+                                            <td class="table-item dropdown" dropdown  >
+                                                <span dropdownToggle  class="dropdown-toggle custom-dropdown">
+                                                    {{act.assetNumber}}
+                                                </span>
+                                                <ul *dropdownMenu class="dropdown-menu">
+                                                    <li class="menuitem" (click)="showRemarksModal(act)">
+                                                        <a class="dropdown-item custom" href="javascript:void(0)" >
+                                                            <i class="fa fa-fw fa-pencil" ></i>
+                                                            update remarks 
+                                                        </a>
+                                                    </li>
+                                                    <li class="menuitem" (click)="generateDoc(act)">
+                                                        <a class="dropdown-item custom" href="javascript:void(0)" >
+                                                            <i class="fa fa-fw fa-file" ></i>
+                                                            generate document 
+                                                        </a>
+                                                    </li>
+                                                    <li class="menuitem" (click)="showUploadModal(act)">
+                                                        <a class="dropdown-item custom" href="javascript:void(0)" >
+                                                            <i class="fa fa-fw fa-upload" ></i>
+                                                            upload attachment 
+                                                        </a>
+                                                    </li>
+                                                    <li class="menuitem" (click)="downloadAttachment(act.attachment)" *ngIf="act.attachment" >
+                                                        <a class="dropdown-item custom" href="javascript:void(0)" >
+                                                            <i class="fa fa-fw fa-download" ></i>
+                                                            download attachment 
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </td>
+                                            <td>{{act.assetType}}</td>
+                                            <td>{{act.attachment}}</td>
+                                            <td>{{act.remarks}}</td>
+                                            <td>{{act.updatedAt | date}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <pagination 
+                    [totalItems] ="filteredList?.length"
+                    [(ngModel)]="currentPage"
+                    [maxSize] ="maxSize"
+                    class="pagination-md"
+                    [itemsPerPage] ="itemsPerPage"
+                    (pageChanged)="pageChange($event)"
+                    [boundaryLinks]="true"
+                    [rotate]="false" >
+                </pagination>
+        </div>
+    </div>
+   
+  </div>
+</div>
+
+
+<div bsModal #upload_modal="bs-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Upload Attachment</h4>
+                <button type="button" class="close" aria-label="Close" (click)="upload_modal.hide()" >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form (ngSubmit)="uploadAccAttachment()">
+                <div class="modal-body">
+                    <div class="text-danger">*Note: Uploading file will override existing file if there is any</div>
+                    <input type="file" name="file" ([ngModel])="uploadAttachment" (change)="onFileChange($event)">
+                    <div class="text-danger">{{submitError}}</div>
+                </div>
+                <div class="modal-footer">    
+                    <button type="submit" class="btn btn-custom" *ngIf="uploadAttachment">Submit</button>
+                    <button type="button" class="btn btn-custom"  (click)="upload_modal.hide()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
+<div bsModal #acc_modal="bs-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Accountability for {{selectedItem?.employeeName}}</h4>
+                    <button type="button" class="close" aria-label="Close" (click)="acc_modal.hide()" >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form (ngSubmit)="addAccountableAsset()">
+                    <div class="modal-body">
+                        <div><strong>Asset</strong></div>
+                        <ng-select [items]="allAsset"
+                            [ngModelOptions]="{standalone: true}"
+                            placeholder="Select Asset"
+                            [searchFn]="searchAsset"
+                            [(ngModel)]="newAccAsset.accountability">
+                            <ng-template ng-label-tmp ng-option-tmp let-item="item">
+                                    {{item.assetNumber}} ({{item.assetType}}) 
+                            </ng-template>
+                        </ng-select>
+                        <div class="text-danger">{{submitError}}</div>
+                    </div>
+                    <div class="modal-footer">    
+                        <button type="submit" class="btn btn-custom" *ngIf="newAccAsset.accountability">Submit</button>
+                        <button type="button" class="btn btn-custom"  (click)="acc_modal.hide()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div bsModal #remarks_modal="bs-modal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add Remarks for {{selectedAcc?.assetNumber}}</h4>
+                        <button type="button" class="close" aria-label="Close" (click)="remarks_modal.hide()" >
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form (ngSubmit)="updateRemarks()">
+                        <div class="modal-body">
+                            <div><strong>Remarks</strong> <span class="text-danger"> *Existing remarks will be overriden</span></div>
+                            <textarea name="remarks" id="remarks" class="form-control" [(ngModel)]="selectedAcc.remarks">
+
+                            </textarea>
+                            <div class="text-danger">{{submitError}}</div>
+                        </div>
+                        <div class="modal-footer">    
+                            <button type="submit" class="btn btn-custom" >Submit</button>
+                            <button type="button" class="btn btn-custom"  (click)="remarks_modal.hide()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+          
+

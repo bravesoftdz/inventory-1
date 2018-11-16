@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "inventory.jwt.client",
+    "type": "java.lang.String",
+    "description": "A description for 'inventory.jwt.client'"
+  },
+  {
+    "name": "inventory.jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'inventory.jwt.secret'"
+  },
+  {
+    "name": "inventory.jwt.expiration",
+    "type": "java.lang.Long",
+    "description": "A description for 'inventory.jwt.secret'"
+  }
+]}

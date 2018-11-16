@@ -1,0 +1,53 @@
+<nav class="sidebar" [ngClass]="{sidebarPushRight: isActive}">
+    <div class="nested-menu">
+        <div class="list-group">
+            <a routerLink="/dashboard" class="list-group-item"><i class="fa fa-dashboard"></i> Dashboard</a>
+            <a class="list-group-item" (click)="addExpandClass('assets')"><i class="fa fa-cubes"></i> Assets <i class="pull-right fa" [ngClass]="assetsToggled ? 'fa-chevron-down' : 'fa-chevron-right'"></i></a>
+            <div class="nested" [class.expand]="assetsToggled">
+                <ul class="submenu">
+                    <li><a routerLink="/system-units" routerLinkActive="active-link">System Units</a></li>            
+                    <li><a routerLink="/monitors" routerLinkActive="active-link"> Monitors</a></li>
+                    <li><a routerLink="/keyboards" routerLinkActive="active-link"> Keyboards</a></li>
+                    <li><a routerLink="/mice" routerLinkActive="active-link"> Mice</a></li>
+                    <li><a routerLink="/headsets" routerLinkActive="active-link"> Headsets</a></li>
+                    <li><a routerLink="/ups" routerLinkActive="active-link"> UPS</a></li>
+                    <li><a routerLink="/softwares" routerLinkActive="active-link"> Softwares</a></li>
+                    <li><a routerLink="/switches" routerLinkActive="active-link"> Switches</a></li>
+                    <li><a routerLink="/rfids" routerLinkActive="active-link"> RFIDs</a></li>
+                
+                </ul>
+            </div>
+
+            <a class="list-group-item" (click)="addExpandClass('tracker')"><i class="fa fa-exchange"></i> Tracker<i class="pull-right fa" [ngClass]="trackerToggled ? 'fa-chevron-down' : 'fa-chevron-right'"></i></a> 
+            <div class="nested" [class.expand]="trackerToggled">
+                <ul class="submenu">
+                    <li ><a  routerLink="/prod-assets" routerLinkActive="active-link">Production Assets</a></li>
+                    <li><a  routerLink="/non-prod-assets" routerLinkActive="active-link">Non Production Assets</a></li>
+                    <li><a routerLink="/accountability" routerLinkActive="active-link">Accountability</a></li>
+                    <li><a routerLink="/switch-tracker" routerLinkActive="active-link">Switch Tracker</a></li>
+                
+                </ul>
+            </div>
+            <a class="list-group-item" (click)="addExpandClass('settings')"><i class="fa fa-gear"></i> Settings<i class="pull-right fa" [ngClass]="settingsToggled ? 'fa-chevron-down' : 'fa-chevron-right'"></i></a> 
+            <div class="nested" [class.expand]="settingsToggled">
+                <ul class="submenu">
+                    <li><a  routerLink="/models" routerLinkActive="active-link">Models</a></li>
+                    <li><a routerLink="/stations" routerLinkActive="active-link">Stations</a></li>
+                    <li><a routerLink="/non-prod-locations" routerLinkActive="active-link">Non Prod Locations</a></li>
+                
+                </ul>
+            </div>
+        </div>
+     
+    </div>
+
+
+ 
+
+  </nav>
+  
+  
+  
+  
+  
+  

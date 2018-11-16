@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  contextPath: /
+  
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/inv_db
+    username: personivsu
+    password: 93rs0n1v
+    driver-class-name: com.mysql.jdbc.Driver
+  thymeleaf.cache: false
+  
+security:
+  basic:
+    enabled: false
+inventory:
+  jwt:
+    client: inventory-client
+    secret: secret
+    expiration: 604800
+logging:
+ level:
+  org:
+    springframework:
+      security: DEBUG
